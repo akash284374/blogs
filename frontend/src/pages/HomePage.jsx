@@ -1,25 +1,24 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getAllPosts } from '../services/postService';
 import PostCard from '../components/PostCard';
-
-const dummyPosts = [
-    {
-        id: 1,
-        title: 'Mastering React in 2025',
-        description: 'Learn the latest trends and techniques in React development.',
-    },
-    {
-        id: 2,
-        title: 'Building a Full-Stack Blog App',
-        description: 'Step-by-step guide to build a complete blog app using MERN stack.',
-    },
-    {
-        id: 3,
-        title: 'Dark Mode with Tailwind CSS',
-        description: 'How to implement beautiful dark mode in modern apps.',
-    },
-];
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
+    const [posts, setPosts] = useState([]);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await getAllPosts();
+                setPosts(response.data);
+            } catch (err) {
+                setError('Failed to load posts');
+            }
+        };
+        fetchPosts();
+    }, []);
+
     return (
         <section className="max-w-4xl mx-auto px-4 py-10">
             <h1 className="text-4xl font-bold mb-4">Welcome to BlogApp 🚀</h1>
@@ -34,10 +33,16 @@ export default function HomePage() {
                 Get Started
             </Link>
 
+            {error && <p className="text-red-500">{error}</p>}
+
             <div className="space-y-4">
-                {dummyPosts.map((post) => (
-                    <PostCard key={post.id} title={post.title} content={post.description} />
-                ))}
+                {posts.length > 0 ? (
+                    posts.map((post) => (
+                        <PostCard key={post._id} title={post.title} content={post.content} />
+                    ))
+                ) : (
+                    <p className="text-gray-600 dark:text-gray-400">No posts found.</p>
+                )}
             </div>
         </section>
     );

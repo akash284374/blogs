@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPost } from '../services/postService'; // ✅ Import your API function
 
 export default function CreatePostPage() {
     const navigate = useNavigate();
@@ -15,15 +16,21 @@ export default function CreatePostPage() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Post Created:', formData);
-        navigate('/');
+        try {
+            await createPost(formData); // ✅ Actually POST to backend
+            // navigate('/my-blogs');
+            //  // ✅ Redirect to your posts
+            navigate('/');
+        } catch (err) {
+            console.error('Failed to create post:', err);
+        }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-inherit text-inherit">
-            <div className="w-full max-w-2xl p-8 rounded-lg shadow-md bg-white dark:bg-gray-800 transition-colors duration-300">
+            <div className="w-full max-w-2xl p-8 rounded-lg shadow-md bg-white dark:bg-gray-800">
                 <h1 className="text-3xl font-bold mb-6 text-center">Create a New Post</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>

@@ -31,7 +31,7 @@ export default function App() {
                             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                             <Route path="/reset-password" element={<ResetPasswordPage />} />
                             <Route path="/account" element={<AccountPage />} />
-                            <Route path="/myposts" element={<MyPostsPage />} /> {/* ✅ Added */}
+                            <Route path="/my-blogs" element={<MyPostsPage />} /> {/* ✅ Added */}
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>
                     </main>

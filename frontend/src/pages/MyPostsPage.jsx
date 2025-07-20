@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import { getUserPosts } from '../services/postService';
 import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
 
@@ -12,20 +12,22 @@ export default function MyPostsPage() {
     useEffect(() => {
         const fetchMyPosts = async () => {
             try {
-                const response = await api.get('/posts/mine');
+                const response = await getUserPosts(user._id);
                 setPosts(response.data);
             } catch (err) {
                 setError('Failed to load your posts');
             }
         };
 
-        if (user) fetchMyPosts();
+        if (user?._id) fetchMyPosts();
     }, [user]);
 
     if (!user) {
         return (
             <div className="text-center mt-20">
-                <p className="text-lg">Please <Link className="text-blue-500 underline" to="/login">login</Link> to view your posts.</p>
+                <p className="text-lg">
+                    Please <Link className="text-blue-500 underline" to="/login">login</Link> to view your posts.
+                </p>
             </div>
         );
     }
@@ -39,7 +41,7 @@ export default function MyPostsPage() {
             {posts.length > 0 ? (
                 <div className="space-y-4">
                     {posts.map((post) => (
-                        <PostCard key={post._id} title={post.title} content={post.description} />
+                        <PostCard key={post._id} title={post.title} content={post.content} />
                     ))}
                 </div>
             ) : (

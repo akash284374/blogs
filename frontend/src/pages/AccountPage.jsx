@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext'; // Assuming you have AuthContext
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
 export default function AccountPage() {
     const navigate = useNavigate();
-    const { user, logout } = useContext(AuthContext); // Assuming AuthContext provides user, logout
+    const { user, logout } = useContext(AuthContext);
+    const [blogs, setBlogs] = useState([]);
 
     const handleLogout = async () => {
         try {
@@ -17,14 +18,24 @@ export default function AccountPage() {
         }
     };
 
+    useEffect(() => {
+        if (!user?._id) return;
+        api.get(`/posts/user/${user._id}`)
+            .then((res) => setBlogs(res.data.posts || []))
+            .catch(() => setBlogs([]));
+    }, [user]);
+
+    if (!user) return <p className="text-center mt-10">Unauthorized</p>;
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-inherit text-inherit">
             <div className="w-full max-w-md p-8 rounded-xl shadow-lg bg-white dark:bg-gray-800 transition-all">
                 <h2 className="text-3xl font-bold mb-6 text-center">Account Details</h2>
 
                 <div className="space-y-4 text-center">
-                    <p><span className="font-semibold">Username:</span> {user?.username}</p>
-                    <p><span className="font-semibold">Email:</span> {user?.email}</p>
+                    <p><span className="font-semibold">User ID:</span> {user._id}</p>
+                    <p><span className="font-semibold">Name:</span> {user.name}</p>
+                    <p><span className="font-semibold">Email:</span> {user.email}</p>
                 </div>
 
                 <div className="space-y-4 mt-8">
@@ -42,6 +53,23 @@ export default function AccountPage() {
                         Logout
                     </button>
                 </div>
+
+                {/* <div className="mt-10">
+                    <h3 className="text-xl font-semibold mb-2">Your Blogs</h3>
+                    {blogs.length === 0 ? (
+                        <p className="text-gray-500 text-center">You have not written any blogs yet.</p>
+                    ) : (
+                        <ul className="list-disc pl-5">
+                            {blogs.map((post) => (
+                                <li key={post._id}>
+                                    <button onClick={() => navigate(`/posts/${post._id}`)} className="text-blue-500 hover:underline">
+                                        {post.title}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div> */}
             </div>
         </div>
     );

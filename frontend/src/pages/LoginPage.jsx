@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext'; // ✅ import context
 
 export default function LoginPage() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
+    const { login } = useAuth();  // ✅ get login from AuthContext
+    const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
@@ -21,8 +20,9 @@ export default function LoginPage() {
         e.preventDefault();
         setError('');
         try {
-            await loginUser(formData);
-            navigate('/');
+            const res = await loginUser(formData);
+            login(res.data.user); // ✅ Store user in AuthContext
+            navigate('/account'); // ✅ Now this will work without refresh
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed');
         }

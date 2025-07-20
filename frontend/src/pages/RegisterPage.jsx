@@ -5,7 +5,7 @@ import { registerUser } from '../services/authService';
 export default function RegisterPage() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
     });
@@ -43,8 +43,8 @@ export default function RegisterPage() {
                         <label className="block mb-1 font-medium">Username</label>
                         <input
                             type="text"
-                            name="username"
-                            value={formData.username}
+                            name="name"
+                            value={formData.name}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg bg-inherit text-inherit focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
                             required
